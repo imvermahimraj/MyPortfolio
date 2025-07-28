@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { apiService } from '../services/api';
 
 // Custom hook for page view tracking
