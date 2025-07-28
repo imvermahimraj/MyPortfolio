@@ -1,8 +1,11 @@
 import React from 'react';
 import { personalStory, philosophy, interests, futurePlans } from '../data/mock';
 import { User, Heart, Target, Trophy } from 'lucide-react';
+import { usePageView } from '../hooks/useAnalytics';
 
 const About = () => {
+  usePageView('about');
+
   return (
     <section id="about" className="py-20 bg-white">
       <div className="container mx-auto px-6">

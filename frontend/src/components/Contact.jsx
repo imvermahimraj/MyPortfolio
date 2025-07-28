@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
 import { personalInfo } from '../data/mock';
-import { Mail, Phone, MapPin, Send, MessageCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, MessageCircle, Loader2 } from 'lucide-react';
+import { apiService } from '../services/api';
+import toast, { Toaster } from 'react-hot-toast';
+import { usePageView } from '../hooks/useAnalytics';
 
 const Contact = () => {
+  usePageView('contact');
+  
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     subject: '',
     message: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -17,15 +23,41 @@ const Contact = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Mock form submission
-    alert('Thank you for your message! I will get back to you soon.');
-    setFormData({ name: '', email: '', subject: '', message: '' });
+    setIsSubmitting(true);
+
+    try {
+      const result = await apiService.submitContactMessage(formData);
+      
+      if (result.success) {
+        toast.success(result.data.message || 'Message sent successfully!', {
+          duration: 5000,
+          position: 'top-center',
+        });
+        
+        // Reset form
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      } else {
+        toast.error(result.error || 'Failed to send message. Please try again.', {
+          duration: 5000,
+          position: 'top-center',
+        });
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
+      toast.error('Something went wrong. Please try again later.', {
+        duration: 5000,
+        position: 'top-center',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <section id="contact" className="py-20 bg-gradient-to-br from-blue-50 to-indigo-100">
+      <Toaster />
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Get In Touch</h2>
@@ -92,7 +124,7 @@ const Contact = () => {
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
-                      Your Name
+                      Your Name *
                     </label>
                     <input
                       type="text"
@@ -101,14 +133,17 @@ const Contact = () => {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      disabled={isSubmitting}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
                       placeholder="Enter your name"
+                      minLength={2}
+                      maxLength={100}
                     />
                   </div>
                   
                   <div>
                     <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
-                      Email Address
+                      Email Address *
                     </label>
                     <input
                       type="email"
@@ -117,7 +152,8 @@ const Contact = () => {
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      disabled={isSubmitting}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
                       placeholder="Enter your email"
                     />
                   </div>
@@ -125,7 +161,7 @@ const Contact = () => {
                 
                 <div>
                   <label htmlFor="subject" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Subject
+                    Subject *
                   </label>
                   <input
                     type="text"
@@ -134,14 +170,17 @@ const Contact = () => {
                     value={formData.subject}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    disabled={isSubmitting}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
                     placeholder="What's this about?"
+                    minLength={5}
+                    maxLength={200}
                   />
                 </div>
                 
                 <div>
                   <label htmlFor="message" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Message
+                    Message *
                   </label>
                   <textarea
                     id="message"
@@ -149,18 +188,31 @@ const Contact = () => {
                     value={formData.message}
                     onChange={handleChange}
                     required
+                    disabled={isSubmitting}
                     rows={5}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none disabled:bg-gray-100 disabled:cursor-not-allowed"
                     placeholder="Tell me about your project or how I can help..."
+                    minLength={10}
+                    maxLength={2000}
                   />
                 </div>
                 
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                  disabled={isSubmitting}
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-blue-600 disabled:hover:to-indigo-600"
                 >
-                  <Send size={20} />
-                  Send Message
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 size={20} className="animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Send size={20} />
+                      Send Message
+                    </>
+                  )}
                 </button>
               </form>
             </div>

@@ -1,8 +1,25 @@
 import React from 'react';
 import { MapPin, Phone, Mail, Download } from 'lucide-react';
 import { personalInfo } from '../data/mock';
+import { usePageView } from '../hooks/useAnalytics';
 
 const Hero = () => {
+  usePageView('hero');
+
+  const scrollToContact = () => {
+    const element = document.getElementById('contact');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const scrollToProjects = () => {
+    const element = document.getElementById('projects');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <section id="home" className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 pt-20">
       <div className="container mx-auto px-6 py-20">
@@ -41,12 +58,18 @@ const Hero = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-blue-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl transform hover:scale-105">
+            <button 
+              onClick={scrollToProjects}
+              className="bg-blue-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl transform hover:scale-105"
+            >
               View My Work
             </button>
-            <button className="border-2 border-blue-600 text-blue-600 px-8 py-3 rounded-full font-semibold hover:bg-blue-600 hover:text-white transition-all shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-2 justify-center">
+            <button 
+              onClick={scrollToContact}
+              className="border-2 border-blue-600 text-blue-600 px-8 py-3 rounded-full font-semibold hover:bg-blue-600 hover:text-white transition-all shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-2 justify-center"
+            >
               <Download size={20} />
-              Download Resume
+              Get In Touch
             </button>
           </div>
         </div>
