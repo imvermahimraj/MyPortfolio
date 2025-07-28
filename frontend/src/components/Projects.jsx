@@ -1,8 +1,11 @@
 import React from 'react';
 import { projectHighlights } from '../data/mock';
 import { Folder, ExternalLink, ChevronRight } from 'lucide-react';
+import { usePageView } from '../hooks/useAnalytics';
 
 const Projects = () => {
+  usePageView('projects');
+
   return (
     <section id="projects" className="py-20 bg-gray-50">
       <div className="container mx-auto px-6">

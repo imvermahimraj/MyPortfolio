@@ -1,8 +1,11 @@
 import React from 'react';
 import { professionalExperience } from '../data/mock';
 import { Building, Calendar, CheckCircle } from 'lucide-react';
+import { usePageView } from '../hooks/useAnalytics';
 
 const Experience = () => {
+  usePageView('experience');
+
   return (
     <section id="experience" className="py-20 bg-white">
       <div className="container mx-auto px-6">

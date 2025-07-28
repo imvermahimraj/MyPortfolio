@@ -1,8 +1,11 @@
 import React from 'react';
 import { technicalSkills, keyStrengths, certifications } from '../data/mock';
 import { Code, Database, Settings, TestTube, Bug, GitBranch, FileText, Award, Star } from 'lucide-react';
+import { usePageView } from '../hooks/useAnalytics';
 
 const Skills = () => {
+  usePageView('skills');
+
   const skillCategories = [
     { title: 'Languages', skills: technicalSkills.languages, icon: Code, color: 'bg-blue-500' },
     { title: 'Automation', skills: technicalSkills.automation, icon: Settings, color: 'bg-green-500' },
