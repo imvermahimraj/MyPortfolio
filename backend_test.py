@@ -249,8 +249,13 @@ class BackendTester:
     def test_cors_configuration(self):
         """Test CORS headers"""
         try:
-            # Make an OPTIONS request to check CORS
-            response = requests.options(f"{BASE_URL}/contact", timeout=10)
+            # Make an OPTIONS request with proper CORS headers to check CORS
+            headers = {
+                'Origin': 'https://example.com',
+                'Access-Control-Request-Method': 'POST',
+                'Access-Control-Request-Headers': 'Content-Type'
+            }
+            response = requests.options(f"{BASE_URL}/contact", headers=headers, timeout=10)
             
             cors_headers = [
                 'access-control-allow-origin',
